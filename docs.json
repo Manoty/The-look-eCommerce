@@ -1,0 +1,89 @@
+{
+  "project": "eCommerce Analytics",
+  "generated_at": "2026-02-05T23:56:20.546400",
+  "models": {
+    "raw": [
+      "raw_users",
+      "raw_products",
+      "raw_orders",
+      "raw_order_items",
+      "raw_events"
+    ],
+    "staging": [
+      "stg_users",
+      "stg_products",
+      "stg_orders",
+      "stg_order_items",
+      "stg_events"
+    ],
+    "marts": {
+      "dimensions": [
+        "dim_users",
+        "dim_products"
+      ],
+      "facts": [
+        "fct_orders",
+        "fct_events"
+      ]
+    }
+  },
+  "tests": [
+    {
+      "test": "dim_users: unique user_id",
+      "status": "PASS",
+      "result": 0
+    },
+    {
+      "test": "dim_users: not_null user_id",
+      "status": "PASS",
+      "result": 0
+    },
+    {
+      "test": "dim_products: unique product_id",
+      "status": "PASS",
+      "result": true
+    },
+    {
+      "test": "dim_products: not_null product_id",
+      "status": "PASS",
+      "result": 0
+    },
+    {
+      "test": "fct_orders: not_null order_id",
+      "status": "PASS",
+      "result": 0
+    },
+    {
+      "test": "fct_orders: not_null user_id",
+      "status": "PASS",
+      "result": 0
+    },
+    {
+      "test": "fct_events: accepted_values event_type",
+      "status": "PASS",
+      "result": 0
+    }
+  ],
+  "row_counts": {
+    "raw_users": 500,
+    "raw_products": 100,
+    "raw_orders": 2554,
+    "raw_order_items": 7727,
+    "raw_events": 13537,
+    "dim_users": 500,
+    "dim_products": 100,
+    "fct_orders": 7727,
+    "fct_events": 13537
+  },
+  "descriptions": {
+    "stg_users": "Light cleaning of raw users. One row per user.",
+    "stg_products": "Light cleaning of raw products. One row per product.",
+    "stg_orders": "Light cleaning of raw orders. One row per order.",
+    "stg_order_items": "Light cleaning of raw order items. One row per line item.",
+    "stg_events": "Light cleaning of raw events. One row per event.",
+    "dim_users": "One row per user. Contains user attributes and account age.",
+    "dim_products": "One row per product. Contains product attributes and margin.",
+    "fct_orders": "One row per order line item. Contains order and product details with calculated margins.",
+    "fct_events": "One row per event. Contains event details and event sequence within user."
+  }
+}
