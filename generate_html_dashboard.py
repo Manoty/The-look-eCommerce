@@ -453,7 +453,7 @@ html_content += """
 
 # Save HTML
 output_path = PROJECT_DIR / "dashboard.html"
-with open(output_path, 'w') as f:
+with open(output_path, 'w', encoding='utf-8') as f:
     f.write(html_content)
 
 print(f"\n{'='*80}")
