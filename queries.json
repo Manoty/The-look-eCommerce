@@ -1,0 +1,36 @@
+{
+  "generated_at": "2026-02-06T20:36:06.996726",
+  "queries": {
+    "revenue_by_category": {
+      "description": "Revenue broken down by product category",
+      "use_case": "Category performance analysis",
+      "chart_type": "Bar chart",
+      "file": "revenue_by_category.sql"
+    },
+    "top_products": {
+      "description": "Top 10 products by revenue",
+      "use_case": "Product performance",
+      "chart_type": "Table",
+      "file": "top_products.sql"
+    },
+    "user_cohort": {
+      "description": "User behavior by account age cohort",
+      "use_case": "Cohort analysis and retention",
+      "chart_type": "Bar/Line chart",
+      "file": "user_cohort.sql"
+    },
+    "event_funnel": {
+      "description": "User journey through event types",
+      "use_case": "Funnel analysis and conversion",
+      "chart_type": "Funnel chart",
+      "file": "event_funnel.sql"
+    },
+    "daily_revenue": {
+      "description": "Revenue trend over time",
+      "use_case": "Time series analysis",
+      "chart_type": "Line chart",
+      "file": "daily_revenue.sql"
+    }
+  },
+  "notes": "All queries validated and saved as SQL files. Ready for Streamlit integration."
+}
