@@ -112,8 +112,8 @@ html = f"""<!DOCTYPE html>
         }}
         body {{
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #041229 0%, #0b3d59 100%);
-            color: #f5f7fb;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
             min-height: 100vh;
             padding: 20px;
         }}
@@ -122,13 +122,13 @@ html = f"""<!DOCTYPE html>
             margin: 0 auto;
             background: white;
             border-radius: 12px;
-            box-shadow: 0 20px 60px rgba(2,18,45,0.6);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.12);
             padding: 40px;
         }}
         .header {{
             text-align: center;
             margin-bottom: 40px;
-            border-bottom: 3px solid #0b4f8c;
+            border-bottom: 3px solid #667eea;
             padding-bottom: 20px;
         }}
         .header h1 {{
@@ -147,11 +147,11 @@ html = f"""<!DOCTYPE html>
             margin-bottom: 40px;
         }}
         .metric-card {{
-            background: linear-gradient(135deg, #0b4f8c 0%, #083a6b 100%);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
             padding: 25px;
             border-radius: 10px;
-            box-shadow: 0 10px 25px rgba(3, 30, 60, 0.15);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.12);
             text-align: center;
         }}
         .metric-card h3 {{
@@ -219,13 +219,13 @@ html = f"""<!DOCTYPE html>
         }}
         .summary {{
             background: #f0f4ff;
-            border: 2px solid #0b4f8c;
+            border: 2px solid #667eea;
             padding: 30px;
             border-radius: 10px;
             margin-bottom: 30px;
         }}
         .summary h3 {{
-            color: #0b4f8c;
+            color: #667eea;
             margin-bottom: 15px;
             font-size: 1.5em;
         }}
@@ -259,7 +259,7 @@ html = f"""<!DOCTYPE html>
             margin: 10px 0;
         }}
         th {{
-            background: #0b4f8c;
+            background: #667eea;
             color: white;
             padding: 12px;
             text-align: left;
@@ -421,7 +421,7 @@ html += f"""
             x: {json.dumps(chart1_data['categories'])},
             y: {json.dumps(chart1_data['revenues'])},
             type: 'bar',
-            marker: {{color: '#0b4f8c'}}
+            marker: {{color: '#667eea'}}
         }};
         var layout1 = {{
             title: 'Revenue by Category',
@@ -438,14 +438,14 @@ html += f"""
             y: {json.dumps(chart2_users)},
             name: 'Users',
             type: 'bar',
-            marker: {{color: '#0b4f8c'}}
+            marker: {{color: '#667eea'}}
         }};
         var trace2b = {{
             x: {json.dumps(chart2_cohorts)},
             y: {json.dumps(chart2_orders)},
             name: 'Orders',
             type: 'bar',
-            marker: {{color: '#083a6b'}}
+            marker: {{color: '#764ba2'}}
         }};
         var layout2 = {{
             title: 'Users and Orders by Cohort',
@@ -464,7 +464,7 @@ html += f"""
             x: {json.dumps(chart3_users_funnel)},
             textposition: 'inside',
             textinfo: 'value+percent initial',
-            marker: {{color: '#0b4f8c'}}
+            marker: {{color: '#667eea'}}
         }};
         var layout3 = {{
             title: 'User Journey Funnel',
@@ -479,8 +479,8 @@ html += f"""
             y: {json.dumps(chart4_revenues)},
             type: 'scatter',
             mode: 'lines+markers',
-            marker: {{color: '#0b4f8c', size: 6}},
-            line: {{color: '#0b4f8c', width: 2}}
+            marker: {{color: '#667eea', size: 6}},
+            line: {{color: '#667eea', width: 2}}
         }};
         var layout4 = {{
             title: 'Daily Revenue Trend',
