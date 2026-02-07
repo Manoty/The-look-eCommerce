@@ -246,6 +246,13 @@ queries_info = {
         "use_case": "Time series analysis",
         "chart_type": "Line chart",
         "file": "daily_revenue.sql"
+    },
+   
+    "product_price_tiers": {
+        "description": "Product performance segmented by price range",
+        "use_case": "Price strategy and margin analysis",
+        "chart_type": "Bar chart",
+        "file": "product_price_tiers.sql"
     }
 }
 
@@ -275,6 +282,128 @@ print(f"✓ queries.json saved")
 print(f"✓ 5 SQL query files saved to {QUERIES_DIR}/")
 
 # ============================================================================
+# QUERY 6: CUSTOMER LIFETIME VALUE (CLV)
+# ============================================================================
+print("\n" + "-"*80)
+print("QUERY 6: Customer Lifetime Value")
+print("-"*80)
+
+clv_sql = """
+SELECT 
+    u.user_id,
+    u.email,
+    u.created_at,
+    COUNT(DISTINCT o.order_id) as total_orders,
+    ROUND(SUM(o.line_total), 2) as lifetime_revenue,
+    ROUND(AVG(o.line_total), 2) as avg_order_value,
+    ROUND(SUM(o.margin_dollars), 2) as lifetime_margin,
+    ROUND(100.0 * SUM(o.margin_dollars) / SUM(o.line_total), 1) as margin_pct,
+    MAX(o.order_date) as last_purchase_date,
+    ROUND((CURRENT_TIMESTAMP - MAX(o.order_date))::NUMERIC / 86400, 0) as days_since_last_order
+FROM dim_users u
+LEFT JOIN fct_orders o ON u.user_id = o.user_id AND o.order_status = 'completed'
+GROUP BY u.user_id, u.email, u.created_at
+ORDER BY lifetime_revenue DESC
+LIMIT 100
+"""
+
+with open(QUERIES_DIR / "customer_lifetime_value.sql", 'w') as f:
+    f.write(clv_sql)
+
+result = conn.execute(clv_sql).fetchall()
+columns = [desc[0] for desc in conn.description]
+
+print(f"Rows: {len(result)}")
+print(f"Columns: {columns}")
+print("\nTop 3 customers by CLV:")
+for row in result[:3]:
+    print(f"  {dict(zip(columns, row))}")
+
+# ============================================================================
+# QUERY 7: CATEGORY PERFORMANCE MONTH-OVER-MONTH
+# ============================================================================
+print("\n" + "-"*80)
+print("QUERY 7: Category Performance by Month")
+print("-"*80)
+
+month_category_sql = """
+SELECT 
+    DATE_TRUNC('month', o.order_date)::DATE as month,
+    p.category,
+    COUNT(DISTINCT o.order_id) as orders,
+    SUM(o.quantity) as units_sold,
+    ROUND(SUM(o.line_total), 2) as revenue,
+    ROUND(SUM(o.margin_dollars), 2) as margin,
+    ROUND(SUM(o.margin_dollars) / SUM(o.line_total), 3) as margin_pct
+FROM fct_orders o
+JOIN dim_products p ON o.product_id = p.product_id
+WHERE o.order_status = 'completed'
+GROUP BY DATE_TRUNC('month', o.order_date), p.category
+ORDER BY month DESC, revenue DESC
+"""
+
+with open(QUERIES_DIR / "category_by_month.sql", 'w') as f:
+    f.write(month_category_sql)
+
+result = conn.execute(month_category_sql).fetchall()
+columns = [desc[0] for desc in conn.description]
+
+print(f"Rows: {len(result)}")
+print(f"Columns: {columns}")
+print("\nMost recent month by category:")
+for row in result[:5]:
+    print(f"  {dict(zip(columns, row))}")
+
+# ============================================================================
+# QUERY 8: PRODUCT PRICE TIER ANALYSIS
+# ============================================================================
+print("\n" + "-"*80)
+print("QUERY 8: Product Performance by Price Tier")
+print("-"*80)
+
+price_tier_sql = """
+SELECT 
+    CASE 
+        WHEN p.price < 50 THEN 'Budget (<$50)'
+        WHEN p.price < 150 THEN 'Mid-Range ($50-150)'
+        WHEN p.price < 300 THEN 'Premium ($150-300)'
+        ELSE 'Luxury ($300+)'
+    END as price_tier,
+    COUNT(DISTINCT p.product_id) as product_count,
+    COUNT(DISTINCT o.order_id) as orders,
+    SUM(o.quantity) as units_sold,
+    ROUND(SUM(o.line_total), 2) as revenue,
+    ROUND(AVG(o.line_total), 2) as avg_order_value,
+    ROUND(SUM(o.margin_dollars), 2) as total_margin,
+    ROUND(100.0 * SUM(o.margin_dollars) / SUM(o.line_total), 1) as margin_pct
+FROM fct_orders o
+JOIN dim_products p ON o.product_id = p.product_id
+WHERE o.order_status = 'completed'
+GROUP BY price_tier
+ORDER BY 
+    CASE 
+        WHEN price_tier = 'Budget (<$50)' THEN 1
+        WHEN price_tier = 'Mid-Range ($50-150)' THEN 2
+        WHEN price_tier = 'Premium ($150-300)' THEN 3
+        ELSE 4
+    END
+"""
+
+with open(QUERIES_DIR / "product_price_tiers.sql", 'w') as f:
+    f.write(price_tier_sql)
+
+result = conn.execute(price_tier_sql).fetchall()
+columns = [desc[0] for desc in conn.description]
+
+print(f"Rows: {len(result)}")
+print(f"Columns: {columns}")
+print("\nSample data:")
+for row in result:
+    print(f"  {dict(zip(columns, row))}")
+
+print(f"✓ 3 additional SQL query files saved to {QUERIES_DIR}/")
+
+# ============================================================================
 # FINAL CHECKPOINT
 # ============================================================================
 print("\n" + "="*80)
@@ -285,7 +414,10 @@ print("✓ Top products query - VALIDATED")
 print("✓ User cohort query - VALIDATED")
 print("✓ Event funnel query - VALIDATED")
 print("✓ Daily revenue trend query - VALIDATED")
-print("✓ All queries saved as .sql files")
+print("✓ Customer lifetime value query - VALIDATED")
+print("✓ Category by month query - VALIDATED")
+print("✓ Product price tiers query - VALIDATED")
+print("✓ All 8 queries saved as .sql files")
 print("✓ queries.json generated")
 print("\nReady for Hour 4 (Streamlit dashboard)!")
 print("="*80 + "\n")
