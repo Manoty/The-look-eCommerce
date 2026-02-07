@@ -110,25 +110,25 @@ html = f"""<!DOCTYPE html>
             padding: 0;
             box-sizing: border-box;
         }}
-        body {{
+        body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: #333;
+            background: linear-gradient(135deg, #041229 0%, #0b3d59 100%);
+            color: #f5f7fb;
             min-height: 100vh;
             padding: 20px;
-        }}
-        .container {{
+        }
+        .container {
             max-width: 1400px;
             margin: 0 auto;
             background: white;
             border-radius: 12px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            box-shadow: 0 20px 60px rgba(2,18,45,0.6);
             padding: 40px;
-        }}
+        }
         .header {{
             text-align: center;
             margin-bottom: 40px;
-            border-bottom: 3px solid #667eea;
+            border-bottom: 3px solid #0b4f8c;
             padding-bottom: 20px;
         }}
         .header h1 {{
@@ -146,14 +146,14 @@ html = f"""<!DOCTYPE html>
             gap: 20px;
             margin-bottom: 40px;
         }}
-        .metric-card {{
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        .metric-card {
+            background: linear-gradient(135deg, #0b4f8c 0%, #083a6b 100%);
             color: white;
             padding: 25px;
             border-radius: 10px;
-            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.2);
+            box-shadow: 0 10px 25px rgba(3, 30, 60, 0.15);
             text-align: center;
-        }}
+        }
         .metric-card h3 {{
             font-size: 0.9em;
             opacity: 0.9;
@@ -258,13 +258,13 @@ html = f"""<!DOCTYPE html>
             border-collapse: collapse;
             margin: 10px 0;
         }}
-        th {{
-            background: #667eea;
+        th {
+            background: #0b4f8c;
             color: white;
             padding: 12px;
             text-align: left;
             font-weight: 600;
-        }}
+        }
         td {{
             padding: 10px 12px;
             border-bottom: 1px solid #eee;
