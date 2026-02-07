@@ -621,7 +621,7 @@ html += f"""
         
         var layout8 = {{
             title: 'Category Revenue Trend Over Time',
-            xaxis: {{title: 'Month', type: 'date'}},
+            xaxis: {{title: 'Month'}},
             yaxis: {{title: 'Revenue (USD)'}},
             margin: {{t: 40, b: 60, l: 80, r: 80}},
             height: 400,
