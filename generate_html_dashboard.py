@@ -146,14 +146,14 @@ html = f"""<!DOCTYPE html>
             gap: 20px;
             margin-bottom: 40px;
         }}
-        .metric-card {
+        .metric-card {{
             background: linear-gradient(135deg, #0b4f8c 0%, #083a6b 100%);
             color: white;
             padding: 25px;
             border-radius: 10px;
             box-shadow: 0 10px 25px rgba(3, 30, 60, 0.15);
             text-align: center;
-        }
+        }}
         .metric-card h3 {{
             font-size: 0.9em;
             opacity: 0.9;
