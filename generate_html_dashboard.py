@@ -110,21 +110,21 @@ html = f"""<!DOCTYPE html>
             padding: 0;
             box-sizing: border-box;
         }}
-        body {
+        body {{
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(135deg, #041229 0%, #0b3d59 100%);
             color: #f5f7fb;
             min-height: 100vh;
             padding: 20px;
-        }
-        .container {
+        }}
+        .container {{
             max-width: 1400px;
             margin: 0 auto;
             background: white;
             border-radius: 12px;
             box-shadow: 0 20px 60px rgba(2,18,45,0.6);
             padding: 40px;
-        }
+        }}
         .header {{
             text-align: center;
             margin-bottom: 40px;
