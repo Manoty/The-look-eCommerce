@@ -219,13 +219,13 @@ html = f"""<!DOCTYPE html>
         }}
         .summary {{
             background: #f0f4ff;
-            border: 2px solid #667eea;
+            border: 2px solid #0b4f8c;
             padding: 30px;
             border-radius: 10px;
             margin-bottom: 30px;
         }}
         .summary h3 {{
-            color: #667eea;
+            color: #0b4f8c;
             margin-bottom: 15px;
             font-size: 1.5em;
         }}
@@ -258,13 +258,13 @@ html = f"""<!DOCTYPE html>
             border-collapse: collapse;
             margin: 10px 0;
         }}
-        th {
+        th {{
             background: #0b4f8c;
             color: white;
             padding: 12px;
             text-align: left;
             font-weight: 600;
-        }
+        }}
         td {{
             padding: 10px 12px;
             border-bottom: 1px solid #eee;
@@ -421,7 +421,7 @@ html += f"""
             x: {json.dumps(chart1_data['categories'])},
             y: {json.dumps(chart1_data['revenues'])},
             type: 'bar',
-            marker: {{color: '#667eea'}}
+            marker: {{color: '#0b4f8c'}}
         }};
         var layout1 = {{
             title: 'Revenue by Category',
@@ -438,14 +438,14 @@ html += f"""
             y: {json.dumps(chart2_users)},
             name: 'Users',
             type: 'bar',
-            marker: {{color: '#667eea'}}
+            marker: {{color: '#0b4f8c'}}
         }};
         var trace2b = {{
             x: {json.dumps(chart2_cohorts)},
             y: {json.dumps(chart2_orders)},
             name: 'Orders',
             type: 'bar',
-            marker: {{color: '#764ba2'}}
+            marker: {{color: '#083a6b'}}
         }};
         var layout2 = {{
             title: 'Users and Orders by Cohort',
@@ -464,7 +464,7 @@ html += f"""
             x: {json.dumps(chart3_users_funnel)},
             textposition: 'inside',
             textinfo: 'value+percent initial',
-            marker: {{color: '#667eea'}}
+            marker: {{color: '#0b4f8c'}}
         }};
         var layout3 = {{
             title: 'User Journey Funnel',
@@ -479,8 +479,8 @@ html += f"""
             y: {json.dumps(chart4_revenues)},
             type: 'scatter',
             mode: 'lines+markers',
-            marker: {{color: '#667eea', size: 6}},
-            line: {{color: '#667eea', width: 2}}
+            marker: {{color: '#0b4f8c', size: 6}},
+            line: {{color: '#0b4f8c', width: 2}}
         }};
         var layout4 = {{
             title: 'Daily Revenue Trend',
