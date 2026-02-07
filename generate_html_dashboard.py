@@ -109,7 +109,16 @@ cat_month_revenue = latest_month_data['revenue'].astype(float).tolist()
 price_tiers = product_price_tiers['price_tier'].tolist()
 price_tier_orders = product_price_tiers['orders'].astype(int).tolist()
 price_tier_revenue = product_price_tiers['revenue'].astype(float).tolist()
+# Chart 8: Category Revenue Trend Over Time
+category_by_month_sorted = category_by_month.sort_values('month')
+months = sorted(category_by_month_sorted['month'].unique())
+months_str = [str(m) for m in months]
+categories_unique = category_by_month_sorted['category'].unique()
 
+category_traces_data = {}
+for cat in categories_unique:
+    cat_data = category_by_month_sorted[category_by_month_sorted['category'] == cat].sort_values('month')
+    category_traces_data[cat] = cat_data['revenue'].astype(float).tolist()
 # Top products for table
 top_10_products = []
 for idx, row in top_products.head(10).iterrows():
@@ -390,8 +399,8 @@ html += f"""
         
         <div class="charts-grid">
             <div class="chart-container">
-                <div class="chart-title">💰 Performance by Price Tier</div>
-                <div id="chart7" style="width:100%;height:400px;"></div>
+                <div class="chart-title">� Category Revenue Trend Over Time</div>
+                <div id="chart8" style="width:100%;height:400px;"></div>
             </div>
         </div>
         
@@ -591,6 +600,57 @@ html += f"""
             barmode: 'group'
         }};
         Plotly.newPlot('chart7', [trace7a, trace7b], layout7, {{responsive: true}});
+
+        // Chart 8: Category Revenue Trend Over Time
+        var trace8a = {{
+            x: {json.dumps(months_str)},
+            y: {json.dumps(category_traces_data.get('Sports', []))},
+            name: 'Sports',
+            type: 'scatter',
+            mode: 'lines+markers',
+            line: {{color: '#667eea'}}
+        }};
+        var trace8b = {{
+            x: {json.dumps(months_str)},
+            y: {json.dumps(category_traces_data.get('Books', []))},
+            name: 'Books',
+            type: 'scatter',
+            mode: 'lines+markers',
+            line: {{color: '#764ba2'}}
+        }};
+        var trace8c = {{
+            x: {json.dumps(months_str)},
+            y: {json.dumps(category_traces_data.get('Electronics', []))},
+            name: 'Electronics',
+            type: 'scatter',
+            mode: 'lines+markers',
+            line: {{color: '#f093fb'}}
+        }};
+        var trace8d = {{
+            x: {json.dumps(months_str)},
+            y: {json.dumps(category_traces_data.get('Home & Garden', []))},
+            name: 'Home & Garden',
+            type: 'scatter',
+            mode: 'lines+markers',
+            line: {{color: '#4facfe'}}
+        }};
+        var trace8e = {{
+            x: {json.dumps(months_str)},
+            y: {json.dumps(category_traces_data.get('Clothing', []))},
+            name: 'Clothing',
+            type: 'scatter',
+            mode: 'lines+markers',
+            line: {{color: '#43e97b'}}
+        }};
+        var layout8 = {{
+            title: 'Category Revenue Trend Over Time',
+            xaxis: {{title: 'Month'}},
+            yaxis: {{title: 'Revenue (USD)'}},
+            margin: {{t: 40, b: 60, l: 80, r: 80}},
+            height: 400,
+            hovermode: 'x unified'
+        }};
+        Plotly.newPlot('chart8', [trace8a, trace8b, trace8c, trace8d, trace8e], layout8, {{responsive: true}});
     </script>
 </body>
 </html>
@@ -606,7 +666,7 @@ print(f"{'='*80}")
 print(f"\nSaved to: {output_path}")
 print(f"Open 'dashboard.html' in your browser")
 print(f"\n{'='*80}")
-print("HOUR 4: COMPLETE")
+print("RUN COMPLETE")
 print(f"{'='*80}\n")
 
 conn.close()
