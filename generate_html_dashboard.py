@@ -19,6 +19,27 @@ def load_query(filename):
 
 # Connect and load data
 conn = duckdb.connect(str(DB_PATH))
+"""
+HOUR 4: Generate Static HTML Dashboard
+No Streamlit, no Python version issues - just pure HTML + Plotly
+"""
+
+import duckdb
+import pandas as pd
+from pathlib import Path
+import json
+
+PROJECT_DIR = Path(__file__).parent
+DB_PATH = PROJECT_DIR / "ecommerce.duckdb"
+QUERIES_DIR = PROJECT_DIR / "queries"
+
+# Load queries
+def load_query(filename):
+    with open(QUERIES_DIR / filename, 'r') as f:
+        return f.read()
+
+# Connect and load data
+conn = duckdb.connect(str(DB_PATH))
 
 revenue_by_category_sql = load_query("revenue_by_category.sql")
 top_products_sql = load_query("top_products.sql")
@@ -35,9 +56,7 @@ daily_revenue = conn.execute(daily_revenue_sql).df()
 
 print("✓ All data loaded")
 
-# ============================================================================
-# CALCULATE METRICS
-# ============================================================================
+# Calculate metrics
 total_revenue = float(revenue_by_cat['revenue'].sum())
 total_orders = int(revenue_by_cat['order_count'].sum())
 avg_order_value = float(revenue_by_cat['avg_order_value'].mean())
@@ -51,11 +70,34 @@ purchase_users = int(event_funnel[event_funnel['event_type'] == 'purchase']['use
 all_users = int(event_funnel['user_count'].max())
 conversion = (purchase_users / all_users) * 100
 
-# ============================================================================
-# BUILD HTML
-# ============================================================================
-html_content = f"""
-<!DOCTYPE html>
+# Prepare data for JSON
+chart1_data = {
+    'categories': revenue_by_cat['category'].tolist(),
+    'revenues': revenue_by_cat['revenue'].astype(float).tolist()
+}
+
+chart2_cohorts = user_cohort['cohort'].tolist()
+chart2_users = user_cohort['user_count'].astype(int).tolist()
+chart2_orders = user_cohort['total_orders'].astype(int).tolist()
+
+chart3_events = event_funnel['event_type'].tolist()
+chart3_users_funnel = event_funnel['user_count'].astype(int).tolist()
+
+daily_sorted = daily_revenue.sort_values('order_date')
+chart4_dates = daily_sorted['order_date'].astype(str).tolist()
+chart4_revenues = daily_sorted['revenue'].astype(float).tolist()
+
+# Top products for table
+top_10_products = []
+for idx, row in top_products.head(10).iterrows():
+    top_10_products.append({
+        'name': row['name'],
+        'revenue': float(row['revenue']),
+        'margin': float(row['margin_pct']) * 100
+    })
+
+# Build HTML
+html = f"""<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -68,7 +110,6 @@ html_content = f"""
             padding: 0;
             box-sizing: border-box;
         }}
-        
         body {{
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -76,7 +117,6 @@ html_content = f"""
             min-height: 100vh;
             padding: 20px;
         }}
-        
         .container {{
             max-width: 1400px;
             margin: 0 auto;
@@ -85,32 +125,27 @@ html_content = f"""
             box-shadow: 0 20px 60px rgba(0,0,0,0.3);
             padding: 40px;
         }}
-        
         .header {{
             text-align: center;
             margin-bottom: 40px;
             border-bottom: 3px solid #667eea;
             padding-bottom: 20px;
         }}
-        
         .header h1 {{
             font-size: 2.5em;
             color: #333;
             margin-bottom: 10px;
         }}
-        
         .header p {{
             color: #666;
             font-size: 1.1em;
         }}
-        
         .metrics {{
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
             gap: 20px;
             margin-bottom: 40px;
         }}
-        
         .metric-card {{
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
@@ -119,7 +154,6 @@ html_content = f"""
             box-shadow: 0 10px 25px rgba(102, 126, 234, 0.2);
             text-align: center;
         }}
-        
         .metric-card h3 {{
             font-size: 0.9em;
             opacity: 0.9;
@@ -127,74 +161,62 @@ html_content = f"""
             text-transform: uppercase;
             letter-spacing: 1px;
         }}
-        
         .metric-card .value {{
             font-size: 2em;
             font-weight: bold;
         }}
-        
         .charts-grid {{
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
             gap: 30px;
             margin-bottom: 40px;
         }}
-        
         .chart-container {{
             background: #f8f9fa;
             border-radius: 10px;
             padding: 20px;
             box-shadow: 0 5px 15px rgba(0,0,0,0.1);
         }}
-        
         .chart-title {{
             font-size: 1.3em;
             font-weight: bold;
             margin-bottom: 15px;
             color: #333;
         }}
-        
         .insights {{
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
             gap: 20px;
             margin-bottom: 40px;
         }}
-        
         .insight-card {{
             padding: 25px;
             border-radius: 10px;
             border-left: 5px solid;
         }}
-        
         .insight-success {{
             background: #d4edda;
             border-color: #28a745;
             color: #155724;
         }}
-        
         .insight-info {{
             background: #d1ecf1;
             border-color: #17a2b8;
             color: #0c5460;
         }}
-        
         .insight-warning {{
             background: #fff3cd;
             border-color: #ffc107;
             color: #856404;
         }}
-        
         .insight-card h4 {{
             font-size: 1.1em;
             margin-bottom: 10px;
         }}
-        
         .insight-card p {{
             font-size: 0.95em;
             line-height: 1.6;
         }}
-        
         .summary {{
             background: #f0f4ff;
             border: 2px solid #667eea;
@@ -202,29 +224,24 @@ html_content = f"""
             border-radius: 10px;
             margin-bottom: 30px;
         }}
-        
         .summary h3 {{
             color: #667eea;
             margin-bottom: 15px;
             font-size: 1.5em;
         }}
-        
         .summary p {{
             line-height: 1.8;
             color: #555;
             margin-bottom: 10px;
         }}
-        
         .summary ul {{
             margin-left: 20px;
             color: #555;
         }}
-        
         .summary li {{
             margin-bottom: 8px;
             line-height: 1.6;
         }}
-        
         .footer {{
             text-align: center;
             color: #999;
@@ -233,17 +250,14 @@ html_content = f"""
             padding-top: 20px;
             margin-top: 40px;
         }}
-        
         .table-container {{
             overflow-x: auto;
         }}
-        
         table {{
             width: 100%;
             border-collapse: collapse;
             margin: 10px 0;
         }}
-        
         th {{
             background: #667eea;
             color: white;
@@ -251,12 +265,10 @@ html_content = f"""
             text-align: left;
             font-weight: 600;
         }}
-        
         td {{
             padding: 10px 12px;
             border-bottom: 1px solid #eee;
         }}
-        
         tr:hover {{
             background: #f5f5f5;
         }}
@@ -264,13 +276,11 @@ html_content = f"""
 </head>
 <body>
     <div class="container">
-        <!-- HEADER -->
         <div class="header">
             <h1>📊 eCommerce Analytics Dashboard</h1>
             <p>Real-time analytics powered by dbt + DuckDB</p>
         </div>
         
-        <!-- METRICS -->
         <div class="metrics">
             <div class="metric-card">
                 <h3>Total Revenue</h3>
@@ -290,7 +300,6 @@ html_content = f"""
             </div>
         </div>
         
-        <!-- CHARTS ROW 1 -->
         <div class="charts-grid">
             <div class="chart-container">
                 <div class="chart-title">📦 Revenue by Category</div>
@@ -312,7 +321,7 @@ html_content = f"""
 
 # Add top products to table
 for idx, row in top_products.head(10).iterrows():
-    html_content += f"""
+    html += f"""
                             <tr>
                                 <td>{row['name']}</td>
                                 <td>${row['revenue']:,.0f}</td>
@@ -320,14 +329,13 @@ for idx, row in top_products.head(10).iterrows():
                             </tr>
     """
 
-html_content += """
+html += f"""
                         </tbody>
                     </table>
                 </div>
             </div>
         </div>
         
-        <!-- CHARTS ROW 2 -->
         <div class="charts-grid">
             <div class="chart-container">
                 <div class="chart-title">👥 User Cohorts by Account Age</div>
@@ -339,7 +347,6 @@ html_content += """
             </div>
         </div>
         
-        <!-- CHARTS ROW 3 -->
         <div class="charts-grid">
             <div class="chart-container">
                 <div class="chart-title">📅 Daily Revenue Trend (Last 30 Days)</div>
@@ -347,12 +354,11 @@ html_content += """
             </div>
         </div>
         
-        <!-- INSIGHTS -->
         <h2 style="margin-bottom: 20px; color: #333;">💡 Key Insights</h2>
         <div class="insights">
             <div class="insight-card insight-success">
                 <h4>🏆 Top Performing Category</h4>
-                <p><strong>{top_category['category']}</strong> leads with <strong>${top_category['revenue']:,.0f}</strong> in revenue ({top_category['order_count']:.0f} orders)</p>
+                <p><strong>{top_category['category']}</strong> leads with <strong>${top_category['revenue']:,.0f}</strong> in revenue ({int(top_category['order_count'])} orders)</p>
             </div>
             <div class="insight-card insight-info">
                 <h4>⭐ Best Product</h4>
@@ -360,15 +366,14 @@ html_content += """
             </div>
             <div class="insight-card insight-warning">
                 <h4>📱 Newest Users (0-30 days)</h4>
-                <p><strong>{newest_cohort['user_count']:.0f}</strong> users, avg <strong>${newest_cohort['avg_order_value']:,.2f}}/order</strong></p>
+                <p><strong>{int(newest_cohort['user_count'])}</strong> users, avg <strong>${newest_cohort['avg_order_value']:,.2f}</strong>/order</p>
             </div>
             <div class="insight-card insight-info">
                 <h4>🎯 Conversion Rate</h4>
-                <p><strong>{conversion:.1f}%</strong> of users completed a purchase ({purchase_users:.0f}/{all_users:.0f} users)</p>
+                <p><strong>{conversion:.1f}%</strong> of users completed a purchase ({purchase_users}/{all_users} users)</p>
             </div>
         </div>
         
-        <!-- SUMMARY -->
         <div class="summary">
             <h3>📝 Executive Summary</h3>
             <p>This eCommerce analytics dashboard reveals a healthy and growing business with strong performance across all metrics.</p>
@@ -391,7 +396,7 @@ html_content += """
             <p style="margin-top: 15px;"><strong>User Behavior & Conversion:</strong></p>
             <ul>
                 <li><strong>{conversion:.1f}%</strong> of users are converting to purchasers</li>
-                <li>Newest user cohort shows <strong>{newest_cohort['user_count']:.0f}}</strong> engaged users</li>
+                <li>Newest user cohort shows <strong>{int(newest_cohort['user_count'])}</strong> engaged users</li>
                 <li>Strong engagement with page_view as primary entry point</li>
             </ul>
             
@@ -412,57 +417,96 @@ html_content += """
     
     <script>
         // Chart 1: Revenue by Category
-        var data1 = {json.dumps([{"x": list(revenue_by_cat["category"]), "y": list(revenue_by_cat["revenue"]), "type": "bar", "marker": {"color": list(revenue_by_cat["revenue"]), "colorscale": "Viridis"}}])};
-        var layout1 = {{title: "Total Revenue by Category", xaxis: {{title: "Category"}}, yaxis: {{title: "Revenue ($)"}}, hovermode: "closest", margin: {{t: 40, b: 40, l: 60, r: 40}}}};
-        Plotly.newPlot("chart1", data1, layout1, {{responsive: true}});
+        var trace1 = {{
+            x: {json.dumps(chart1_data['categories'])},
+            y: {json.dumps(chart1_data['revenues'])},
+            type: 'bar',
+            marker: {{color: '#667eea'}}
+        }};
+        var layout1 = {{
+            title: 'Revenue by Category',
+            xaxis: {{title: 'Category'}},
+            yaxis: {{title: 'Revenue (USD)'}},
+            margin: {{t: 40, b: 60, l: 80, r: 40}},
+            height: 400
+        }};
+        Plotly.newPlot('chart1', [trace1], layout1, {{responsive: true}});
         
         // Chart 2: User Cohorts
-        var data2 = [
-            {{x: {json.dumps(list(user_cohort["cohort"]))}, y: {json.dumps(list(user_cohort["user_count"]))}, name: "Users", type: "bar", marker: {{color: "#667eea"}}}},
-            {{x: {json.dumps(list(user_cohort["cohort"]))}, y: {json.dumps(list(user_cohort["total_orders"]))}, name: "Orders", type: "bar", marker: {{color: "#764ba2"}}}}
-        ];
-        var layout2 = {{title: "Users & Orders by Cohort", xaxis: {{title: "Account Age Cohort"}}, yaxis: {{title: "Count"}}, barmode: "group", hovermode: "closest", margin: {{t: 40, b: 40, l: 60, r: 40}}}};
-        Plotly.newPlot("chart2", data2, layout2, {{responsive: true}});
+        var trace2a = {{
+            x: {json.dumps(chart2_cohorts)},
+            y: {json.dumps(chart2_users)},
+            name: 'Users',
+            type: 'bar',
+            marker: {{color: '#667eea'}}
+        }};
+        var trace2b = {{
+            x: {json.dumps(chart2_cohorts)},
+            y: {json.dumps(chart2_orders)},
+            name: 'Orders',
+            type: 'bar',
+            marker: {{color: '#764ba2'}}
+        }};
+        var layout2 = {{
+            title: 'Users and Orders by Cohort',
+            xaxis: {{title: 'Account Age Cohort'}},
+            yaxis: {{title: 'Count'}},
+            barmode: 'group',
+            margin: {{t: 40, b: 60, l: 80, r: 40}},
+            height: 400
+        }};
+        Plotly.newPlot('chart2', [trace2a, trace2b], layout2, {{responsive: true}});
         
-        // Chart 3: Event Funnel
-        var data3 = [{{
-            type: "funnel",
-            y: {json.dumps(list(event_funnel["event_type"]))},
-            x: {json.dumps(list(event_funnel["user_count"]))},
-            textposition: "inside",
-            textinfo: "value+percent initial"
-        }}];
-        var layout3 = {{title: "User Journey Funnel", margin: {{t: 40, b: 40, l: 60, r: 40}}}};
-        Plotly.newPlot("chart3", data3, layout3, {{responsive: true}});
+        // Chart 3: Funnel
+        var trace3 = {{
+            type: 'funnel',
+            y: {json.dumps(chart3_events)},
+            x: {json.dumps(chart3_users_funnel)},
+            textposition: 'inside',
+            textinfo: 'value+percent initial',
+            marker: {{color: '#667eea'}}
+        }};
+        var layout3 = {{
+            title: 'User Journey Funnel',
+            margin: {{t: 40, b: 60, l: 80, r: 40}},
+            height: 400
+        }};
+        Plotly.newPlot('chart3', [trace3], layout3, {{responsive: true}});
         
         // Chart 4: Daily Revenue
-        var data4 = [{{
-            x: {json.dumps(list(daily_revenue.sort_values("order_date")["order_date"].astype(str)))},
-            y: {json.dumps(list(daily_revenue.sort_values("order_date")["revenue"]))},
-            type: "scatter",
-            mode: "lines+markers",
-            marker: {{color: "#667eea", size: 6}},
-            line: {{color: "#667eea", width: 2}}
-        }}];
-        var layout4 = {{title: "Daily Revenue Trend", xaxis: {{title: "Date"}}, yaxis: {{title: "Revenue ($)"}}, hovermode: "x unified", margin: {{t: 40, b: 40, l: 60, r: 40}}}};
-        Plotly.newPlot("chart4", data4, layout4, {{responsive: true}});
+        var trace4 = {{
+            x: {json.dumps(chart4_dates)},
+            y: {json.dumps(chart4_revenues)},
+            type: 'scatter',
+            mode: 'lines+markers',
+            marker: {{color: '#667eea', size: 6}},
+            line: {{color: '#667eea', width: 2}}
+        }};
+        var layout4 = {{
+            title: 'Daily Revenue Trend',
+            xaxis: {{title: 'Date'}},
+            yaxis: {{title: 'Revenue (USD)'}},
+            margin: {{t: 40, b: 60, l: 80, r: 40}},
+            height: 400,
+            hovermode: 'x unified'
+        }};
+        Plotly.newPlot('chart4', [trace4], layout4, {{responsive: true}});
     </script>
 </body>
 </html>
 """
 
-# Save HTML
 output_path = PROJECT_DIR / "dashboard.html"
 with open(output_path, 'w', encoding='utf-8') as f:
-    f.write(html_content)
+    f.write(html)
 
 print(f"\n{'='*80}")
-print("✓ HTML Dashboard generated!")
+print("HTML Dashboard generated!")
 print(f"{'='*80}")
 print(f"\nSaved to: {output_path}")
-print(f"\nTo view: Open 'dashboard.html' in your browser")
+print(f"Open 'dashboard.html' in your browser")
 print(f"\n{'='*80}")
-print("HOUR 4: COMPLETE ✓")
+print("HOUR 4: COMPLETE")
 print(f"{'='*80}\n")
 
 conn.close()
