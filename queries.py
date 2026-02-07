@@ -253,7 +253,12 @@ queries_info = {
         "chart_type": "Table/Scatter plot",
         "file": "customer_lifetime_value.sql"
     },
-    
+    "category_by_month": {
+        "description": "Category performance trend month-over-month",
+        "use_case": "Seasonal trends and growth tracking",
+        "chart_type": "Line/Area chart",
+        "file": "category_by_month.sql"
+    },
     "product_price_tiers": {
         "description": "Product performance segmented by price range",
         "use_case": "Price strategy and margin analysis",
