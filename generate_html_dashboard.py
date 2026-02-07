@@ -46,6 +46,9 @@ top_products_sql = load_query("top_products.sql")
 user_cohort_sql = load_query("user_cohort.sql")
 event_funnel_sql = load_query("event_funnel.sql")
 daily_revenue_sql = load_query("daily_revenue.sql")
+customer_lifetime_value_sql = load_query("customer_lifetime_value.sql")
+category_by_month_sql = load_query("category_by_month.sql")
+product_price_tiers_sql = load_query("product_price_tiers.sql")
 
 # Execute queries
 revenue_by_cat = conn.execute(revenue_by_category_sql).df()
@@ -53,6 +56,9 @@ top_products = conn.execute(top_products_sql).df()
 user_cohort = conn.execute(user_cohort_sql).df()
 event_funnel = conn.execute(event_funnel_sql).df()
 daily_revenue = conn.execute(daily_revenue_sql).df()
+customer_lifetime_value = conn.execute(customer_lifetime_value_sql).df()
+category_by_month = conn.execute(category_by_month_sql).df()
+product_price_tiers = conn.execute(product_price_tiers_sql).df()
 
 print("✓ All data loaded")
 
@@ -86,6 +92,23 @@ chart3_users_funnel = event_funnel['user_count'].astype(int).tolist()
 daily_sorted = daily_revenue.sort_values('order_date')
 chart4_dates = daily_sorted['order_date'].astype(str).tolist()
 chart4_revenues = daily_sorted['revenue'].astype(float).tolist()
+
+# Chart 5: Top CLV customers
+top_clv = customer_lifetime_value.nlargest(10, 'lifetime_revenue')
+clv_emails = [f"User {row['user_id']}" for _, row in top_clv.iterrows()]
+clv_revenues = top_clv['lifetime_revenue'].astype(float).tolist()
+
+# Chart 6: Category by month (latest month)
+category_by_month_sorted = category_by_month.sort_values('month', ascending=False)
+latest_month = category_by_month_sorted['month'].iloc[0]
+latest_month_data = category_by_month_sorted[category_by_month_sorted['month'] == latest_month]
+cat_month_cats = latest_month_data['category'].tolist()
+cat_month_revenue = latest_month_data['revenue'].astype(float).tolist()
+
+# Chart 7: Price tier performance
+price_tiers = product_price_tiers['price_tier'].tolist()
+price_tier_orders = product_price_tiers['orders'].astype(int).tolist()
+price_tier_revenue = product_price_tiers['revenue'].astype(float).tolist()
 
 # Top products for table
 top_10_products = []
@@ -354,6 +377,24 @@ html += f"""
             </div>
         </div>
         
+        <div class="charts-grid">
+            <div class="chart-container">
+                <div class="chart-title">💎 Top 10 Customers by Lifetime Value</div>
+                <div id="chart5" style="width:100%;height:400px;"></div>
+            </div>
+            <div class="chart-container">
+                <div class="chart-title">📊 Category Performance (Latest Month)</div>
+                <div id="chart6" style="width:100%;height:400px;"></div>
+            </div>
+        </div>
+        
+        <div class="charts-grid">
+            <div class="chart-container">
+                <div class="chart-title">💰 Performance by Price Tier</div>
+                <div id="chart7" style="width:100%;height:400px;"></div>
+            </div>
+        </div>
+        
         <h2 style="margin-bottom: 20px; color: #333;">💡 Key Insights</h2>
         <div class="insights">
             <div class="insight-card insight-success">
@@ -491,6 +532,65 @@ html += f"""
             hovermode: 'x unified'
         }};
         Plotly.newPlot('chart4', [trace4], layout4, {{responsive: true}});
+        
+        // Chart 5: Top Customers by CLV
+        var trace5 = {{
+            x: {json.dumps(clv_emails)},
+            y: {json.dumps(clv_revenues)},
+            type: 'bar',
+            marker: {{color: '#764ba2'}}
+        }};
+        var layout5 = {{
+            title: 'Top 10 Customers by Lifetime Value',
+            xaxis: {{title: 'Customer'}},
+            yaxis: {{title: 'Lifetime Revenue (USD)'}},
+            margin: {{t: 40, b: 100, l: 80, r: 40}},
+            height: 400
+        }};
+        Plotly.newPlot('chart5', [trace5], layout5, {{responsive: true}});
+        
+        // Chart 6: Category Performance This Month
+        var trace6 = {{
+            x: {json.dumps(cat_month_cats)},
+            y: {json.dumps(cat_month_revenue)},
+            type: 'bar',
+            marker: {{color: '#667eea'}}
+        }};
+        var layout6 = {{
+            title: 'Category Revenue (Latest Month)',
+            xaxis: {{title: 'Category'}},
+            yaxis: {{title: 'Revenue (USD)'}},
+            margin: {{t: 40, b: 60, l: 80, r: 40}},
+            height: 400
+        }};
+        Plotly.newPlot('chart6', [trace6], layout6, {{responsive: true}});
+        
+        // Chart 7: Price Tier Performance
+        var trace7a = {{
+            x: {json.dumps(price_tiers)},
+            y: {json.dumps(price_tier_orders)},
+            name: 'Orders',
+            type: 'bar',
+            marker: {{color: '#667eea'}}
+        }};
+        var trace7b = {{
+            x: {json.dumps(price_tiers)},
+            y: {json.dumps(price_tier_revenue)},
+            name: 'Revenue',
+            type: 'bar',
+            marker: {{color: '#764ba2'}},
+            yaxis: 'y2'
+        }};
+        var layout7 = {{
+            title: 'Performance by Price Tier',
+            xaxis: {{title: 'Price Tier'}},
+            yaxis: {{title: 'Orders'}},
+            yaxis2: {{title: 'Revenue (USD)', overlaying: 'y', side: 'right'}},
+            margin: {{t: 40, b: 60, l: 80, r: 80}},
+            height: 400,
+            barmode: 'group'
+        }};
+        Plotly.newPlot('chart7', [trace7a, trace7b], layout7, {{responsive: true}});
     </script>
 </body>
 </html>

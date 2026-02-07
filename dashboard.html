@@ -303,6 +303,24 @@
             </div>
         </div>
         
+        <div class="charts-grid">
+            <div class="chart-container">
+                <div class="chart-title">💎 Top 10 Customers by Lifetime Value</div>
+                <div id="chart5" style="width:100%;height:400px;"></div>
+            </div>
+            <div class="chart-container">
+                <div class="chart-title">📊 Category Performance (Latest Month)</div>
+                <div id="chart6" style="width:100%;height:400px;"></div>
+            </div>
+        </div>
+        
+        <div class="charts-grid">
+            <div class="chart-container">
+                <div class="chart-title">💰 Performance by Price Tier</div>
+                <div id="chart7" style="width:100%;height:400px;"></div>
+            </div>
+        </div>
+        
         <h2 style="margin-bottom: 20px; color: #333;">💡 Key Insights</h2>
         <div class="insights">
             <div class="insight-card insight-success">
@@ -315,7 +333,7 @@
             </div>
             <div class="insight-card insight-warning">
                 <h4>📱 Newest Users (0-30 days)</h4>
-                <p><strong>35</strong> users, avg <strong>$772.20</strong>/order</p>
+                <p><strong>34</strong> users, avg <strong>$774.13</strong>/order</p>
             </div>
             <div class="insight-card insight-info">
                 <h4>🎯 Conversion Rate</h4>
@@ -345,7 +363,7 @@
             <p style="margin-top: 15px;"><strong>User Behavior & Conversion:</strong></p>
             <ul>
                 <li><strong>97.9%</strong> of users are converting to purchasers</li>
-                <li>Newest user cohort shows <strong>35</strong> engaged users</li>
+                <li>Newest user cohort shows <strong>34</strong> engaged users</li>
                 <li>Strong engagement with page_view as primary entry point</li>
             </ul>
             
@@ -384,14 +402,14 @@
         // Chart 2: User Cohorts
         var trace2a = {
             x: ["0-30 days", "31-90 days", "91-180 days", "180+ days"],
-            y: [35, 89, 110, 266],
+            y: [34, 89, 109, 268],
             name: 'Users',
             type: 'bar',
             marker: {color: '#667eea'}
         };
         var trace2b = {
             x: ["0-30 days", "31-90 days", "91-180 days", "180+ days"],
-            y: [61, 185, 185, 451],
+            y: [60, 182, 185, 455],
             name: 'Orders',
             type: 'bar',
             marker: {color: '#764ba2'}
@@ -440,6 +458,65 @@
             hovermode: 'x unified'
         };
         Plotly.newPlot('chart4', [trace4], layout4, {responsive: true});
+        
+        // Chart 5: Top Customers by CLV
+        var trace5 = {
+            x: ["User 384", "User 89", "User 92", "User 405", "User 435", "User 235", "User 383", "User 174", "User 32", "User 445"],
+            y: [19310.24, 18239.8, 18146.6, 17257.38, 16509.05, 15741.36, 15541.8, 14804.79, 14769.96, 14319.1],
+            type: 'bar',
+            marker: {color: '#764ba2'}
+        };
+        var layout5 = {
+            title: 'Top 10 Customers by Lifetime Value',
+            xaxis: {title: 'Customer'},
+            yaxis: {title: 'Lifetime Revenue (USD)'},
+            margin: {t: 40, b: 100, l: 80, r: 40},
+            height: 400
+        };
+        Plotly.newPlot('chart5', [trace5], layout5, {responsive: true});
+        
+        // Chart 6: Category Performance This Month
+        var trace6 = {
+            x: ["Books", "Clothing", "Home & Garden", "Electronics", "Sports"],
+            y: [10837.01, 6939.17, 5961.87, 8441.38, 7141.03],
+            type: 'bar',
+            marker: {color: '#667eea'}
+        };
+        var layout6 = {
+            title: 'Category Revenue (Latest Month)',
+            xaxis: {title: 'Category'},
+            yaxis: {title: 'Revenue (USD)'},
+            margin: {t: 40, b: 60, l: 80, r: 40},
+            height: 400
+        };
+        Plotly.newPlot('chart6', [trace6], layout6, {responsive: true});
+        
+        // Chart 7: Price Tier Performance
+        var trace7a = {
+            x: ["Budget (<$50)", "Mid-Range ($50-150)", "Premium ($150-300)", "Luxury ($300+)"],
+            y: [190, 487, 469, 673],
+            name: 'Orders',
+            type: 'bar',
+            marker: {color: '#667eea'}
+        };
+        var trace7b = {
+            x: ["Budget (<$50)", "Mid-Range ($50-150)", "Premium ($150-300)", "Luxury ($300+)"],
+            y: [17584.82, 233186.2, 457573.79, 1369401.26],
+            name: 'Revenue',
+            type: 'bar',
+            marker: {color: '#764ba2'},
+            yaxis: 'y2'
+        };
+        var layout7 = {
+            title: 'Performance by Price Tier',
+            xaxis: {title: 'Price Tier'},
+            yaxis: {title: 'Orders'},
+            yaxis2: {title: 'Revenue (USD)', overlaying: 'y', side: 'right'},
+            margin: {t: 40, b: 60, l: 80, r: 80},
+            height: 400,
+            barmode: 'group'
+        };
+        Plotly.newPlot('chart7', [trace7a, trace7b], layout7, {responsive: true});
     </script>
 </body>
 </html>

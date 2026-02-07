@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-02-06T20:36:06.996726",
+  "generated_at": "2026-02-08T00:07:08.854375",
   "queries": {
     "revenue_by_category": {
       "description": "Revenue broken down by product category",
@@ -30,6 +30,24 @@
       "use_case": "Time series analysis",
       "chart_type": "Line chart",
       "file": "daily_revenue.sql"
+    },
+    "customer_lifetime_value": {
+      "description": "Customer lifetime value with purchase history",
+      "use_case": "Customer segmentation and retention",
+      "chart_type": "Table/Scatter plot",
+      "file": "customer_lifetime_value.sql"
+    },
+    "category_by_month": {
+      "description": "Category performance trend month-over-month",
+      "use_case": "Seasonal trends and growth tracking",
+      "chart_type": "Line/Area chart",
+      "file": "category_by_month.sql"
+    },
+    "product_price_tiers": {
+      "description": "Product performance segmented by price range",
+      "use_case": "Price strategy and margin analysis",
+      "chart_type": "Bar chart",
+      "file": "product_price_tiers.sql"
     }
   },
   "notes": "All queries validated and saved as SQL files. Ready for Streamlit integration."
