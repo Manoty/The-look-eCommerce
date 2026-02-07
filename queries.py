@@ -247,7 +247,13 @@ queries_info = {
         "chart_type": "Line chart",
         "file": "daily_revenue.sql"
     },
-   
+    "customer_lifetime_value": {
+        "description": "Customer lifetime value with purchase history",
+        "use_case": "Customer segmentation and retention",
+        "chart_type": "Table/Scatter plot",
+        "file": "customer_lifetime_value.sql"
+    },
+    
     "product_price_tiers": {
         "description": "Product performance segmented by price range",
         "use_case": "Price strategy and margin analysis",
