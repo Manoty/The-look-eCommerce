@@ -266,39 +266,6 @@ dashboard.html
 
 ---
 
-## 📈 Key Metrics
-
-### Financial Performance
-| Metric | Value | Target | Status |
-|--------|-------|--------|--------|
-| Total Revenue | $2,077,746 | $2.5M | ✓ On Track |
-| Gross Margin | $1,037,859 | 52% | ⚠ At 50% |
-| Avg Order Value | $778.59 | $800+ | ✓ Growing |
-| Revenue Per User | $4,300 | - | ✓ Strong |
-
-### Customer Metrics
-| Metric | Value | Benchmark | Status |
-|--------|-------|-----------|--------|
-| Conversion Rate | 97.9% | 60-80% | ✓ Exceptional |
-| Customer Retention | 96.7% | 70-85% | ✓ Exceeding |
-| Active Users | 483 | - | ✓ Healthy |
-| Orders Per User | 4.2 | - | ✓ Engaged |
-
-### Category Performance (Top 3)
-| Category | Revenue | % of Total | Margin |
-|----------|---------|-----------|--------|
-| Sports | $527,297 | 25.4% | 46% |
-| Books | $424,541 | 20.4% | 55% |
-| Electronics | $386,342 | 18.6% | 53% |
-
-### Product Performance (Top 3)
-| Product | Revenue | Units | Margin % |
-|---------|---------|-------|----------|
-| Product 54 | $48,656 | 98 | 79.6% |
-| Product 74 | $42,611 | 88 | 70.8% |
-| Product 95 | $41,107 | 83 | 51.6% |
-
----
 
 ## 📄 File Guide
 
