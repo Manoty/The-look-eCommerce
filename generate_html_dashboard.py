@@ -602,46 +602,23 @@ html += f"""
         Plotly.newPlot('chart7', [trace7a, trace7b], layout7, {{responsive: true}});
 
         // Chart 8: Category Revenue Trend Over Time
-        var trace8a = {{
-            x: {json.dumps(months_str)},
-            y: {json.dumps(category_traces_data.get('Sports', []))},
-            name: 'Sports',
-            type: 'scatter',
-            mode: 'lines+markers',
-            line: {{color: '#667eea'}}
-        }};
-        var trace8b = {{
-            x: {json.dumps(months_str)},
-            y: {json.dumps(category_traces_data.get('Books', []))},
-            name: 'Books',
-            type: 'scatter',
-            mode: 'lines+markers',
-            line: {{color: '#764ba2'}}
-        }};
-        var trace8c = {{
-            x: {json.dumps(months_str)},
-            y: {json.dumps(category_traces_data.get('Electronics', []))},
-            name: 'Electronics',
-            type: 'scatter',
-            mode: 'lines+markers',
-            line: {{color: '#f093fb'}}
-        }};
-        var trace8d = {{
-            x: {json.dumps(months_str)},
-            y: {json.dumps(category_traces_data.get('Home & Garden', []))},
-            name: 'Home & Garden',
-            type: 'scatter',
-            mode: 'lines+markers',
-            line: {{color: '#4facfe'}}
-        }};
-        var trace8e = {{
-            x: {json.dumps(months_str)},
-            y: {json.dumps(category_traces_data.get('Clothing', []))},
-            name: 'Clothing',
-            type: 'scatter',
-            mode: 'lines+markers',
-            line: {{color: '#43e97b'}}
-        }};
+        var colors8 = ['#667eea', '#764ba2', '#f093fb', '#4facfe', '#43e97b', '#fa709a', '#fee140', '#30b0fe'];
+        var categoryData = {json.dumps(category_traces_data)};
+        var monthsList = {json.dumps(months_str)};
+        var traces8 = [];
+        
+        Object.keys(categoryData).forEach(function(category, index) {{
+            var trace = {{
+                x: monthsList,
+                y: categoryData[category],
+                name: category,
+                type: 'scatter',
+                mode: 'lines+markers',
+                line: {{color: colors8[index % colors8.length]}}
+            }};
+            traces8.push(trace);
+        }});
+        
         var layout8 = {{
             title: 'Category Revenue Trend Over Time',
             xaxis: {{title: 'Month', type: 'date'}},
@@ -650,7 +627,7 @@ html += f"""
             height: 400,
             hovermode: 'x unified'
         }};
-        Plotly.newPlot('chart8', [trace8a, trace8b, trace8c, trace8d, trace8e], layout8, {{responsive: true}});
+        Plotly.newPlot('chart8', traces8, layout8, {{responsive: true}});
     </script>
 </body>
 </html>
